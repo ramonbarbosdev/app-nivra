@@ -7,8 +7,8 @@ export const Colors = {
   tertiary: '#666666',
   button: '#7f5af0',
   accent: '#2cb67d',
-  error: '#EF6B6B',
-  yellow: '#EAB308',
+  error: '#e53170',
+  yellow: '#ff8906',
   gray: '#3A3A3A',
   transparent: 'transparent',
 } as const;
