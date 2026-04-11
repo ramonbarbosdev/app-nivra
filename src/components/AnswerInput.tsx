@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -14,6 +14,7 @@ interface AnswerInputProps {
   onChangeText: (text: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
+  error?: boolean; // 🔥 novo
 }
 
 export const AnswerInput: React.FC<AnswerInputProps> = ({
@@ -21,8 +22,24 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
   onChangeText,
   onSubmit,
   disabled,
+  error = false,
 }) => {
   const scale = React.useRef(new Animated.Value(1)).current;
+
+  // 🔥 animação de erro (shake)
+  const shake = React.useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (error) {
+      Animated.sequence([
+        Animated.timing(shake, { toValue: -8, duration: 50, useNativeDriver: true }),
+        Animated.timing(shake, { toValue: 8, duration: 50, useNativeDriver: true }),
+        Animated.timing(shake, { toValue: -5, duration: 50, useNativeDriver: true }),
+        Animated.timing(shake, { toValue: 5, duration: 50, useNativeDriver: true }),
+        Animated.timing(shake, { toValue: 0, duration: 50, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [error]);
 
   const onPressIn = () => {
     Animated.spring(scale, {
@@ -40,34 +57,45 @@ export const AnswerInput: React.FC<AnswerInputProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder="Sua resposta"
-        placeholderTextColor={Colors.tertiary}
-        keyboardType="default"
-        autoCorrect={false}
-        editable={!disabled}
-        onSubmitEditing={onSubmit}
-        returnKeyType="done"
-      />
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <Pressable
-          onPress={onSubmit}
-          onPressIn={onPressIn}
-          onPressOut={onPressOut}
-          disabled={disabled || !value.trim()}
+    <Animated.View
+      style={{
+        transform: [{ translateX: shake }],
+        width: '100%',
+      }}
+    >
+      <View style={styles.container}>
+        <TextInput
           style={[
-            styles.button,
-            (!value.trim() || disabled) && styles.buttonDisabled,
+            styles.input,
+            error && styles.inputError, // 🔥 highlight vermelho
           ]}
-        >
-          <Text style={styles.buttonText}>Verificar</Text>
-        </Pressable>
-      </Animated.View>
-    </View>
+          value={value}
+          onChangeText={onChangeText}
+          placeholder="Sua resposta"
+          placeholderTextColor={Colors.tertiary}
+          keyboardType="default"
+          autoCorrect={false}
+          editable={!disabled}
+          onSubmitEditing={onSubmit}
+          returnKeyType="done"
+        />
+
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <Pressable
+            onPress={onSubmit}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
+            disabled={disabled || !value.trim()}
+            style={[
+              styles.button,
+              (!value.trim() || disabled) && styles.buttonDisabled,
+            ]}
+          >
+            <Text style={styles.buttonText}>Verificar</Text>
+          </Pressable>
+        </Animated.View>
+      </View>
+    </Animated.View>
   );
 };
 
@@ -89,6 +117,11 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     borderWidth: 1,
     borderColor: Colors.surfaceLight,
+  },
+  // 🔥 estado de erro
+  inputError: {
+    borderColor: '#ff4d4f',
+    borderWidth: 2,
   },
   button: {
     backgroundColor: Colors.button,

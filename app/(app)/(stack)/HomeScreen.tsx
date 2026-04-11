@@ -86,7 +86,7 @@ export const HomeScreen = () => {
       const agrupado = agruparPorTipo(desafiosComStatus);
       setDesafiosPorTipo(agrupado);
 
-      // 🔥 auto open se só tiver 1
+      // 🔥 auto-open se só tiver 1
       if (desafiosComStatus.length === 1) {
         setDesafioAtual(desafiosComStatus[0]);
         setViewMode('DETAIL');
@@ -113,9 +113,18 @@ export const HomeScreen = () => {
 
       const data = res.data;
 
+      console.log(data);
+
+      // 🔴 VALIDAÇÃO DO BACKEND
+      if (data.resposta && data.resposta.valido === false) {
+        setErrorMessage(data.resposta.mensagem);
+        return;
+      }
+
+      // 🟢 FLUXO NORMAL
       const status: AttemptStatus = data.sucesso
         ? 'correct'
-        : mapearFeedback(data.feedback);
+        : mapearFeedback(data.resposta?.feedback);
 
       const newAttempts = [...attempts, status];
       const newGuesses = [...guesses, trimmed];
@@ -123,6 +132,7 @@ export const HomeScreen = () => {
       setAttempts(newAttempts);
       setGuesses(newGuesses);
       setInput('');
+      setErrorMessage(null);
 
       if (data.sucesso || newAttempts.length >= MAX_ATTEMPTS) {
         setTimeout(() => {
@@ -130,6 +140,7 @@ export const HomeScreen = () => {
           setGuesses([]);
         }, 600);
       }
+
     } catch (e: any) {
       setErrorMessage(getApiErrorMessage(e));
     }
@@ -156,6 +167,7 @@ export const HomeScreen = () => {
           setDesafioAtual(d);
           setAttempts([]);
           setGuesses([]);
+          setErrorMessage(null);
           setViewMode('DETAIL');
         }}
       />
@@ -182,24 +194,29 @@ export const HomeScreen = () => {
       <AttemptIndicator attempts={attempts} maxAttempts={MAX_ATTEMPTS} />
 
       {errorMessage && (
-        <Text style={styles.error}>{errorMessage}</Text>
+        <Text style={styles.error}>
+          ⚠ {errorMessage}
+        </Text>
       )}
 
       <AnswerInput
         value={input}
-        onChangeText={setInput}
+        onChangeText={(text) => {
+          setInput(text);
+          if (errorMessage) setErrorMessage(null); // limpa ao digitar
+        }}
         onSubmit={handleCheck}
         disabled={isFinished}
+        error={!!errorMessage} // 🔥 highlight visual
       />
 
       <Pressable
         onPress={() => setViewMode('LIST')}
-        style={[
-          styles.button,
-        ]}
+        style={styles.button}
       >
         <Text style={styles.buttonText}>Voltar</Text>
       </Pressable>
+
     </View>
   );
 
@@ -248,21 +265,15 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   error: {
-    color: 'red',
+    color: '#ff4d4f',
     textAlign: 'center',
+    fontSize: 13,
   },
-  back: {
-    color: Colors.button,
-    fontSize: 14,
-  },
-    button: {
-    backgroundColor: Colors.transparent,
+  button: {
     alignItems: 'center',
   },
-    buttonText: {
+  buttonText: {
     color: Colors.secondary,
     fontSize: 15,
-    fontWeight: '400',
-    letterSpacing: 0.5,
   },
 });
