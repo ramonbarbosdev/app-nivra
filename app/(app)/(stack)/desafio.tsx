@@ -12,17 +12,7 @@ import DesafioRenderer from '@/src/components/desafio/DesafioRenderer';
 
 export default function DesafioScreen() {
 
-  const {
-    resposta,
-    setResposta,
-    erro,
-    enviarResposta,
-  } = useDesafio();
-
   const desafioAtual = useJogoStore((s) => s.desafioAtual);
-  const tentativas = useJogoStore((s) => s.tentativas);
-  const respostas = useJogoStore((s) => s.respostas);
-  const setResultado = useJogoStore((s) => s.setResultado);
 
   useEffect(() => {
     if (!desafioAtual) {
@@ -32,40 +22,11 @@ export default function DesafioScreen() {
 
   if (!desafioAtual) return null;
 
-  const handleEnviar = async () => {
-    const result = await enviarResposta();
-
-    if (!result) return;
-
-    if (result.finalizado) {
-      const novasTentativas = [...tentativas, result.status];
-
-      setResultado(novasTentativas, respostas);
-
-      router.replace('/result');
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <DesafioRenderer
         tipo={desafioAtual.tpDesafio}
         pergunta={desafioAtual.dsPergunta}
-      />
-
-      <IndicatorTentativa
-        tentativas={tentativas}
-        maxTentativas={5}
-      />
-
-      {erro && <Text style={styles.erro}>{erro}</Text>}
-
-      <AnswerInput
-        value={resposta}
-        onChangeText={setResposta}
-        onSubmit={handleEnviar}
-        disabled={false}
-        error={!!erro}
       />
 
       <Pressable onPress={() => router.back()}>
