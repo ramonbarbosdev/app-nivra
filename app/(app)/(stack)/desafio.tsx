@@ -2,11 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-
-import { useDesafio } from '@/src/hooks/useDesafio';
 import { Colors } from '@/src/theme/colors';
-import { AnswerInput } from '@/src/components/AnswerInput';
-import { IndicatorTentativa } from '@/src/components/IndicatorTentativa';
 import { useJogoStore } from '@/src/store/jogoStore';
 import DesafioRenderer from '@/src/components/desafio/DesafioRenderer';
 

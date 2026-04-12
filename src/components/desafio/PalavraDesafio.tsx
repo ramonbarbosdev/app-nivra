@@ -13,7 +13,6 @@ export default function PalavraDesafio({ pergunta }: any) {
     const respostas = useJogoStore((s) => s.respostas);
     const setResultado = useJogoStore((s) => s.setResultado);
     const feedbacks = useJogoStore((s) => s.feedbacks);
-        console.log(feedbacks)
 
     const handleEnviar = async () => {
         const result = await enviarResposta();
@@ -36,7 +35,7 @@ export default function PalavraDesafio({ pergunta }: any) {
             <PalavraGrid
                 respostas={respostas}
                 tentativas={tentativas}
-                feedbacks={feedbacks} // 🔥 ESSENCIAL 
+                feedbacks={feedbacks} 
                 palavraLength={5}
                 maxTentativas={5}
                 currentInput={resposta}
