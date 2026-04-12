@@ -8,6 +8,7 @@ import { Colors } from '@/src/theme/colors';
 import { AnswerInput } from '@/src/components/AnswerInput';
 import { IndicatorTentativa } from '@/src/components/IndicatorTentativa';
 import { useJogoStore } from '@/src/store/jogoStore';
+import DesafioRenderer from '@/src/components/desafio/DesafioRenderer';
 
 export default function DesafioScreen() {
 
@@ -47,9 +48,10 @@ export default function DesafioScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.pergunta}>
-        {desafioAtual.dsPergunta}
-      </Text>
+      <DesafioRenderer
+        tipo={desafioAtual.tpDesafio}
+        pergunta={desafioAtual.dsPergunta}
+      />
 
       <IndicatorTentativa
         tentativas={tentativas}
