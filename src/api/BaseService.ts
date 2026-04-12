@@ -105,7 +105,6 @@ export abstract class BaseService<T, ID = number> {
 
     const url = `${this.endpoint}${endpoint}`;
 
-    // console.log(url)
 
     const response = await api.post<T>(url,data );
 

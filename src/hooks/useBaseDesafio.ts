@@ -20,7 +20,6 @@ const enviar = async () => {
       resposta,
     });
 
-    console.log(data)
 
     if (data.resposta?.valido === false) {
       setErro(data.resposta.mensagem);

@@ -5,6 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AnswerInput } from '../AnswerInput';
 import { useJogoStore } from '@/src/store/jogoStore';
 import { PalavraGrid } from '../PalavraGrid';
+import { Colors } from '@/src/theme/colors';
 
 export default function PalavraDesafio({ pergunta }: any) {
     const { resposta, setResposta, erro, enviarResposta } = usePalavraDesafio();
@@ -65,18 +66,18 @@ const styles = StyleSheet.create({
     },
 
     pergunta: {
-        color: '#fff',
+        color: Colors.primary,
         fontSize: 20,
         fontWeight: '600',
     },
 
     helper: {
-        color: '#888',
+        color: Colors.secondary,
         fontSize: 14,
     },
 
     erro: {
-        color: '#ff4d4f',
+        color: Colors.error,
         textAlign: 'center',
         marginTop: 8,
     },
