@@ -25,19 +25,27 @@ const statusToEmoji: Record<StatusJogo, string> = {
   baixo: Colors.gray,
 };
 
+
 function getMensagem(ganhou: boolean, tentativas: number) {
   if (!ganhou) return 'Quase lá. Você chega na próxima!';
-
   if (tentativas === 1) return 'Genial. Primeira tentativa.';
   if (tentativas <= 3) return 'Mandou muito bem!';
   if (tentativas <= 5) return 'Boa! Você conseguiu.';
-
   return 'Conseguiu!';
 }
 
 export default function Result() {
   const router = useRouter();
-  const { tentativas, respostas, resetar } = useJogoStore();
+
+  const {
+    tentativas,
+    respostas,
+    desafios,
+    indiceAtual,
+    proximoDesafio,
+    setDesafioAtual,
+    resetar,
+  } = useJogoStore();
 
   const tentativasValidas = tentativas.filter(
     (t): t is StatusJogo => t !== 'pendente'
@@ -59,6 +67,8 @@ export default function Result() {
     .slice(0, total)
     .map((r) => [r]);
 
+  const temProximo = indiceAtual < desafios.length - 1;
+
   const scale = React.useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
@@ -79,17 +89,25 @@ export default function Result() {
     const texto = `Nivra • ${new Date().toLocaleDateString()}
 ${emoji}
 
-${ganhou
-        ? `Resolvi em ${idxCorreto + 1}/${tentativasValidas.length}`
-        : 'Não consegui dessa vez 😔'
-      }`;
+${
+  ganhou
+    ? `Resolvi em ${idxCorreto + 1}/${tentativasValidas.length}`
+    : 'Não consegui dessa vez 😔'
+}`;
 
     try {
       await Share.share({ message: texto });
-    } catch { }
+    } catch {}
   };
 
+  const handleNext = () => {
+    const nextIndex = indiceAtual + 1;
 
+    proximoDesafio();
+    setDesafioAtual(desafios[nextIndex]);
+
+    router.replace('/desafio');
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -103,7 +121,9 @@ ${ganhou
             </Text>
 
             <Text style={styles.title}>
-              {ganhou ? getMensagem(ganhou, tentativasValidas.length) : 'Que pena'}
+              {ganhou
+                ? getMensagem(ganhou, tentativasValidas.length)
+                : 'Que pena'}
             </Text>
 
             <Text style={styles.subtitle}>
@@ -113,7 +133,6 @@ ${ganhou
             </Text>
           </View>
 
-          {/* GRID */}
           <View style={styles.gridWrapper}>
             <ResultGrid
               rows={gridRows}
@@ -123,15 +142,28 @@ ${ganhou
           </View>
 
           <View style={styles.actions}>
+
+            {/* 🔥 BOTÃO PRINCIPAL DINÂMICO */}
             <Pressable
               style={styles.primaryButton}
-              onPress={handleShare}
+              onPress={temProximo ? handleNext : () => router.replace('/menu')}
             >
               <Text style={styles.primaryText}>
-                Compartilhar
+                {temProximo ? 'Próximo desafio' : 'Ir para o menu'}
               </Text>
             </Pressable>
 
+            {/* 🔥 SHARE */}
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={handleShare}
+            >
+              <Text style={styles.secondaryText}>
+                Compartilhar resultado
+              </Text>
+            </Pressable>
+
+            {/* 🔥 FECHAR */}
             <Pressable
               style={styles.secondaryButton}
               onPress={() => {
@@ -140,9 +172,10 @@ ${ganhou
               }}
             >
               <Text style={styles.secondaryText}>
-                Fechar
+                Encerrar
               </Text>
             </Pressable>
+
           </View>
 
         </Animated.View>

@@ -33,12 +33,12 @@ export default function Menu() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (desafios.length === 1 && !autoRedirected) {
-      setAutoRedirected(true);
-      handleSelecionar(desafios[0]);
-    }
-  }, [desafios]);
+  // useEffect(() => {
+  //   if (desafios.length === 1 && !autoRedirected) {
+  //     setAutoRedirected(true);
+  //     handleSelecionar(desafios[0]);
+  //   }
+  // }, [desafios]);
 
   const onRefresh = async () => {
     setRefreshing(true);
