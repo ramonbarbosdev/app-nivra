@@ -86,7 +86,7 @@ export default function Start() {
                     </Text>
 
                     <Text style={styles.subtitle}>
-                       {textoPendentes}
+                        {textoPendentes}
                     </Text>
 
                     <Pressable
