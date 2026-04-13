@@ -47,7 +47,6 @@ export default function DesafioScreen() {
 
       <View style={styles.topBar}>
         <HeaderHome />
-
         <Pressable
           style={styles.menuButton}
           onPress={() => router.replace('/menu')}
