@@ -16,13 +16,13 @@ import { ResultGrid } from '@/src/components/ResultGrid';
 import { StatusJogo } from '@/src/types/StatusJogo';
 
 const statusToEmoji: Record<StatusJogo, string> = {
-  correto: '🟩',
-  perto: '🟨',
-  errado: '⬛',
-  fechado: '⬛',
-  pendente: '⬛',
-  alto: '⬛',
-  baixo: '⬛',
+  correto: Colors.accent,
+  perto: Colors.yellow,
+  errado: Colors.gray,
+  fechado: Colors.gray,
+  pendente: Colors.gray,
+  alto: Colors.gray,
+  baixo: Colors.gray,
 };
 
 function getMensagem(ganhou: boolean, tentativas: number) {
@@ -89,148 +89,141 @@ ${ganhou
     } catch { }
   };
 
-  const animatePress = (onPress: () => void) => ({
-    onPressIn: () =>
-      Animated.spring(scale, {
-        toValue: 0.95,
-        useNativeDriver: true,
-      }).start(),
-    onPressOut: () =>
-      Animated.spring(scale, {
-        toValue: 1,
-        friction: 3,
-        useNativeDriver: true,
-      }).start(),
-    onPress,
-  });
+
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
+      <View style={styles.screen}>
 
-        {/* HEADER */}
-        <Animated.View style={[styles.header, { transform: [{ scale }] }]}>
-          <Text style={styles.emoji}>
-            {ganhou ? '🎉' : '😔'}
-          </Text>
+        <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
 
-          <Text style={[
-            styles.title,
-            ganhou ? styles.titleWon : styles.titleLost
-          ]}>
-            {ganhou ? 'Acertou!' : 'Não foi dessa vez'}
-          </Text>
+          <View style={styles.header}>
+            <Text style={styles.emoji}>
+              {ganhou ? '🎉' : '😔'}
+            </Text>
 
-          <Text style={styles.subtitle}>
-            {getMensagem(ganhou, idxCorreto + 1)}
-          </Text>
-        </Animated.View>
+            <Text style={styles.title}>
+              {ganhou ? getMensagem(ganhou, tentativasValidas.length) : 'Que pena'}
+            </Text>
 
-        {/* GRID */}
-        <ResultGrid
-          rows={gridRows}
-          guesses={gridGuesses}
-          correctIndex={idxCorreto}
-        />
+            <Text style={styles.subtitle}>
+              {ganhou
+                ? `Você resolveu em ${idxCorreto + 1} tentativa${idxCorreto > 0 ? 's' : ''}`
+                : 'Não foi dessa vez'}
+            </Text>
+          </View>
 
-        {/* ACTIONS */}
-        <View style={styles.actions}>
-          <Animated.View style={{ transform: [{ scale }], width: '100%' }}>
+          {/* GRID */}
+          <View style={styles.gridWrapper}>
+            <ResultGrid
+              rows={gridRows}
+              guesses={gridGuesses}
+              correctIndex={idxCorreto}
+            />
+          </View>
+
+          <View style={styles.actions}>
             <Pressable
-              style={styles.shareButton}
-              {...animatePress(handleShare)}
+              style={styles.primaryButton}
+              onPress={handleShare}
             >
-              <Text style={styles.shareText}>
-                Compartilhar resultado
+              <Text style={styles.primaryText}>
+                Compartilhar
               </Text>
             </Pressable>
-          </Animated.View>
 
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={() => {
-              resetar();
-              router.replace('/menu');
-            }}
-          >
-            <Text style={styles.secondaryText}>
-              Jogar novamente
-            </Text>
-          </Pressable>
-        </View>
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={() => {
+                resetar();
+                router.replace('/menu');
+              }}
+            >
+              <Text style={styles.secondaryText}>
+                Fechar
+              </Text>
+            </Pressable>
+          </View>
+
+        </Animated.View>
 
       </View>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: Colors.background,
   },
 
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 20,
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: 24,
+    padding: 24,
+
+    borderWidth: 1,
+    borderColor: Colors.surfaceLight,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.6,
+    shadowRadius: 20,
   },
 
   header: {
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 20,
   },
 
   emoji: {
-    fontSize: 52,
+    fontSize: 48,
+    marginBottom: 8,
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-  },
-
-  titleWon: {
-    color: Colors.button,
-  },
-
-  titleLost: {
-    color: Colors.error,
+    color: Colors.primary,
   },
 
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     color: Colors.secondary,
-    textAlign: 'center',
+    marginTop: 4,
+  },
+
+  gridWrapper: {
+    alignItems: 'center',
+    marginVertical: 20,
   },
 
   actions: {
-    width: '100%',
     gap: 12,
+    marginTop: 10,
   },
 
-  shareButton: {
-    backgroundColor: Colors.button,
-    borderRadius: 16,
+  primaryButton: {
+    backgroundColor: Colors.accent,
+    borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
-
-    shadowColor: Colors.button,
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
   },
 
-  shareText: {
+  primaryText: {
     color: Colors.primary,
-    fontSize: 16,
     fontWeight: '700',
+    fontSize: 15,
   },
 
   secondaryButton: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
 
   secondaryText: {
