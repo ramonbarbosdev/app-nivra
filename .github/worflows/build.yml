@@ -3,7 +3,7 @@ name: Build Android Preview
 on:
   push:
     branches:
-      - main   
+      - master   
 
 jobs:
   build:
