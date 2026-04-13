@@ -57,7 +57,6 @@ export default function Start() {
 
         } catch (e) {
             console.log("ERRO COMPLETO:", e);
-
             Alert.alert(
                 "Erro ao buscar",
                 JSON.stringify(e)
