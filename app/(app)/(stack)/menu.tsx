@@ -12,13 +12,14 @@ import { Colors } from '@/src/theme/colors';
 export default function Menu() {
   const [desafios, setDesafios] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [autoRedirected, setAutoRedirected] = useState(false);
   const setDesafioAtual = useJogoStore((s) => s.setDesafioAtual);
   const setResultado = useJogoStore((s) => s.setResultado);
 
   const carregar = async () => {
     const lista = await desafioService.buscarDesafio('');
     setDesafios(lista);
+
   };
 
   useFocusEffect(
@@ -31,6 +32,13 @@ export default function Menu() {
     const interval = setInterval(() => carregar(), 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (desafios.length === 1 && !autoRedirected) {
+      setAutoRedirected(true);
+      handleSelecionar(desafios[0]);
+    }
+  }, [desafios]);
 
   const onRefresh = async () => {
     setRefreshing(true);

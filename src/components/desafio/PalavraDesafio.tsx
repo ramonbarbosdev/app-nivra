@@ -67,9 +67,8 @@ export default function PalavraDesafio({ pergunta }: any) {
 }
 const styles = StyleSheet.create({
     screen: {
-        flex: 1,
+        height: "80%",
         justifyContent: 'space-between',
-        paddingVertical: 24,
     },
 
     header: {
