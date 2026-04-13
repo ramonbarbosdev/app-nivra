@@ -5,34 +5,12 @@ import {
   StyleSheet,
   Pressable,
   Animated,
-  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
+import { Ionicons } from '@expo/vector-icons';
 import { useJogoStore } from '@/src/store/jogoStore';
 import { Colors } from '@/src/theme/colors';
-import { ResultGrid } from '@/src/components/ResultGrid';
-import { StatusJogo } from '@/src/types/StatusJogo';
-
-const statusToEmoji: Record<StatusJogo, string> = {
-  correto: Colors.accent,
-  perto: Colors.yellow,
-  errado: Colors.gray,
-  fechado: Colors.gray,
-  pendente: Colors.gray,
-  alto: Colors.gray,
-  baixo: Colors.gray,
-};
-
-
-function getMensagem(ganhou: boolean, tentativas: number) {
-  if (!ganhou) return 'Quase lá. Você chega na próxima!';
-  if (tentativas === 1) return 'Genial. Primeira tentativa.';
-  if (tentativas <= 3) return 'Mandou muito bem!';
-  if (tentativas <= 5) return 'Boa! Você conseguiu.';
-  return 'Conseguiu!';
-}
 
 export default function Result() {
   const router = useRouter();
@@ -47,58 +25,20 @@ export default function Result() {
     resetar,
   } = useJogoStore();
 
-  const tentativasValidas = tentativas.filter(
-    (t): t is StatusJogo => t !== 'pendente'
-  );
-
-  const idxCorreto = tentativasValidas.indexOf('correto');
+  const idxCorreto = tentativas.indexOf('correto');
   const ganhou = idxCorreto !== -1;
-
-  const total = Math.min(
-    tentativasValidas.length,
-    respostas.length
-  );
-
-  const gridRows = tentativasValidas
-    .slice(0, total)
-    .map((t) => [t]);
-
-  const gridGuesses = respostas
-    .slice(0, total)
-    .map((r) => [r]);
 
   const temProximo = indiceAtual < desafios.length - 1;
 
-  const scale = React.useRef(new Animated.Value(0.8)).current;
+  const fade = React.useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.spring(scale, {
+    Animated.timing(fade, {
       toValue: 1,
-      friction: 4,
-      tension: 120,
+      duration: 300,
       useNativeDriver: true,
     }).start();
   }, []);
-
-  const handleShare = async () => {
-    const emoji = tentativasValidas
-      .slice(0, total)
-      .map((t) => statusToEmoji[t])
-      .join('');
-
-    const texto = `Nivra • ${new Date().toLocaleDateString()}
-${emoji}
-
-${
-  ganhou
-    ? `Resolvi em ${idxCorreto + 1}/${tentativasValidas.length}`
-    : 'Não consegui dessa vez 😔'
-}`;
-
-    try {
-      await Share.share({ message: texto });
-    } catch {}
-  };
 
   const handleNext = () => {
     const nextIndex = indiceAtual + 1;
@@ -111,76 +51,77 @@ ${
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.screen}>
+      <Animated.View style={[styles.container, { opacity: fade }]}>
 
-        <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-
-          <View style={styles.header}>
-            <Text style={styles.emoji}>
-              {ganhou ? '🎉' : '😔'}
-            </Text>
-
-            <Text style={styles.title}>
-              {ganhou
-                ? getMensagem(ganhou, tentativasValidas.length)
-                : 'Que pena'}
-            </Text>
-
-            <Text style={styles.subtitle}>
-              {ganhou
-                ? `Você resolveu em ${idxCorreto + 1} tentativa${idxCorreto > 0 ? 's' : ''}`
-                : 'Não foi dessa vez'}
-            </Text>
-          </View>
-
-          <View style={styles.gridWrapper}>
-            <ResultGrid
-              rows={gridRows}
-              guesses={gridGuesses}
-              correctIndex={idxCorreto}
+        <View style={styles.header}>
+          <Text style={styles.emoji}>
+            <Ionicons
+              name={ganhou ? 'checkmark-circle' : 'close-circle'}
+              size={42}
+              color={ganhou ? '#22c55e' : '#ef4444'}
             />
-          </View>
+          </Text>
 
-          <View style={styles.actions}>
+          <Text style={styles.title}>
+            {ganhou ? 'Mandou bem!' : 'Que pena'}
+          </Text>
 
-            {/* 🔥 BOTÃO PRINCIPAL DINÂMICO */}
-            <Pressable
-              style={styles.primaryButton}
-              onPress={temProximo ? handleNext : () => router.replace('/menu')}
-            >
-              <Text style={styles.primaryText}>
-                {temProximo ? 'Próximo desafio' : 'Ir para o menu'}
-              </Text>
-            </Pressable>
+          <Text style={styles.subtitle}>
+            {ganhou
+              ? `Você acertou em ${idxCorreto + 1} tentativa`
+              : 'Tente novamente amanhã'}
+          </Text>
+        </View>
 
-            {/* 🔥 SHARE */}
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={handleShare}
-            >
-              <Text style={styles.secondaryText}>
-                Compartilhar resultado
-              </Text>
-            </Pressable>
+        {/* GRID CORRETO */}
+        <View style={styles.grid}>
+          {respostas.map((palavra, i) => (
+            <View key={i} style={styles.row}>
+              {palavra.split('').map((letra, j) => (
+                <View key={j} style={styles.cell}>
+                  <Text style={styles.cellText}>
+                    {letra}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
 
-            {/* 🔥 FECHAR */}
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={() => {
-                resetar();
-                router.replace('/menu');
-              }}
-            >
-              <Text style={styles.secondaryText}>
-                Encerrar
-              </Text>
-            </Pressable>
+        {/* BOTÃO PRINCIPAL */}
+        <Pressable
+          style={styles.primaryButton}
+        >
+          <Text style={styles.primaryText}>
+            Compartilhar
+          </Text>
+        </Pressable>
 
-          </View>
+        {/* SECUNDÁRIO */}
+        <Pressable style={styles.secondaryButton}  onPress={
+            temProximo
+              ? handleNext
+              : () => router.replace('/menu')
+          }>
+          <Text style={styles.secondaryText}>
+            {temProximo ? 'Próximo desafio' : 'Voltar ao menu'}
 
-        </Animated.View>
+          </Text>
+        </Pressable>
 
-      </View>
+        <Pressable
+          style={styles.secondaryButton}
+          onPress={() => {
+            resetar();
+            router.replace('/menu');
+          }}
+        >
+          <Text style={styles.secondaryText}>
+            Encerrar
+          </Text>
+        </Pressable>
+
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -190,37 +131,26 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
 
-  screen: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
+    alignItems: 'center',
+    justifyContent:'center',
+        paddingHorizontal: 40,
 
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: 24,
-    padding: 24,
-
-    borderWidth: 1,
-    borderColor: Colors.surfaceLight,
-
-    shadowColor: '#000',
-    shadowOpacity: 0.6,
-    shadowRadius: 20,
   },
 
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
 
   emoji: {
-    fontSize: 48,
-    marginBottom: 8,
+    fontSize: 56,
+    marginBottom: 10,
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '700',
     color: Colors.primary,
   },
@@ -228,39 +158,56 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: Colors.secondary,
-    marginTop: 4,
+    marginTop: 6,
   },
 
-  gridWrapper: {
+  grid: {
+    width: '100%',
     alignItems: 'center',
-    marginVertical: 20,
+    marginBottom: 40,
+    gap: 10,
   },
 
-  actions: {
-    gap: 12,
-    marginTop: 10,
+  row: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+
+  cell: {
+    width: 52,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: Colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  cellText: {
+    color: Colors.primary,
+    fontWeight: '700',
+    fontSize: 18,
   },
 
   primaryButton: {
-    backgroundColor: Colors.accent,
-    borderRadius: 14,
+    width: '100%',
+    backgroundColor: Colors.button,
     paddingVertical: 16,
+    borderRadius: 20,
     alignItems: 'center',
   },
 
   primaryText: {
-    color: Colors.primary,
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: 16,
+    color: Colors.primary,
   },
 
   secondaryButton: {
-    alignItems: 'center',
-    paddingVertical: 12,
+    marginTop: 14,
   },
 
   secondaryText: {
     color: Colors.secondary,
-    fontSize: 14,
+    fontSize: 13,
   },
 });
