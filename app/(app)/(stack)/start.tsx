@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { desafioService } from '@/src/services/desafioService';
 import { useJogoStore } from '@/src/store/jogoStore';
 import { Colors } from '@/src/theme/colors';
+import { Logo } from '@/src/components/Logo';
 
 export default function Start() {
     const router = useRouter();
@@ -118,8 +119,7 @@ export default function Start() {
             >
                 {/* Header label */}
                 <View style={styles.headerRow}>
-                    <View style={styles.dot} />
-                    <Text style={styles.headerLabel}>DESAFIO DIÁRIO</Text>
+                     <Logo />
                 </View>
 
                 {/* Big counter */}
