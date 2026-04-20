@@ -10,10 +10,10 @@ A proposta é criar um **hábito diário de estímulo mental**, com uma experiê
 
 <p align="center">
   <img src="docs/images/home.png" width="250"/>
+  <img src="docs/images/dashboard.png" width="250"/>
   <img src="docs/images/game.png" width="250"/>
   <img src="docs/images/game1.png" width="250"/>
   <img src="docs/images/game2.png" width="250"/>
-  <img src="docs/images/dashboard.png" width="250"/>
 </p>
 
 ---

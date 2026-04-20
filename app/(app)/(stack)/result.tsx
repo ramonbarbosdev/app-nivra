@@ -143,50 +143,52 @@ export default function Result() {
 
 
                                 if (isQuiz) {
-                                    return (
-                                        <View key={i} style={[
-                                            styles.quizAttemptBubble,
-                                            {
-                                                backgroundColor: isLast ? `${Colors.accent}22` : `${Colors.gray}22`,
-                                                borderColor: isLast ? Colors.accent : Colors.gray
-                                            }
-                                        ]}>
-                                            <Text style={[styles.quizAttemptText, { color: isLast ? Colors.accent : Colors.primary }]}>
-                                                {palavra}
-                                            </Text>
-                                            <Ionicons
-                                                name={isLast ? "checkmark-circle" : "close-circle"}
-                                                size={16}
-                                                color={isLast ? Colors.accent : Colors.gray}
-                                            />
-                                        </View>
-                                    );
+
                                 }
 
                                 return (
-                                    <View key={i} style={styles.row}>
-                                        {palavra.split('').map((letra, j) => {
-                                            const cellColor = isLast || status === 'correto' ? Colors.accent : Colors.gray;
-                                            return (
-                                                <View
-                                                    key={j}
-                                                    style={[
-                                                        styles.cell,
-                                                        {
-                                                            backgroundColor: `${cellColor}22`,
-                                                            borderColor: `${cellColor}66`,
-                                                            shadowColor: isLast ? Colors.accent : 'transparent',
-                                                        },
-                                                    ]}
-                                                >
-                                                    <Text style={[styles.cellText, { color: isLast ? Colors.accent : Colors.primary }]}>
-                                                        {letra.toUpperCase()}
-                                                    </Text>
-                                                </View>
-                                            );
-                                        })}
+                                    <View key={i} style={[
+                                        styles.quizAttemptBubble,
+                                        {
+                                            backgroundColor: isLast ? `${Colors.accent}22` : `${Colors.gray}22`,
+                                            borderColor: isLast ? Colors.accent : Colors.gray
+                                        }
+                                    ]}>
+                                        <Text style={[styles.quizAttemptText, { color: isLast ? Colors.accent : Colors.primary }]}>
+                                            {palavra}
+                                        </Text>
+                                        <Ionicons
+                                            name={isLast ? "checkmark-circle" : "close-circle"}
+                                            size={16}
+                                            color={isLast ? Colors.accent : Colors.gray}
+                                        />
                                     </View>
                                 );
+
+                                // return (
+                                //     <View key={i} style={styles.row}>
+                                //         {palavra.split('').map((letra, j) => {
+                                //             const cellColor = isLast || status === 'correto' ? Colors.accent : Colors.gray;
+                                //             return (
+                                //                 <View
+                                //                     key={j}
+                                //                     style={[
+                                //                         styles.cell,
+                                //                         {
+                                //                             backgroundColor: `${cellColor}22`,
+                                //                             borderColor: `${cellColor}66`,
+                                //                             shadowColor: isLast ? Colors.accent : 'transparent',
+                                //                         },
+                                //                     ]}
+                                //                 >
+                                //                     <Text style={[styles.cellText, { color: isLast ? Colors.accent : Colors.primary }]}>
+                                //                         {letra.toUpperCase()}
+                                //                     </Text>
+                                //                 </View>
+                                //             );
+                                //         })}
+                                //     </View>
+                                // );
                             })}
                         </View>
                     </View>
