@@ -94,6 +94,7 @@ export default function Start() {
         if (!pendentes.length) { router.replace('/EmptyState'); return; }
         const index = desafios.findIndex((d) => !d.flFinalizado);
         setIndiceAtual(index);
+      
         setDesafioAtual(desafios[index]);
         setResultado(
             desafios[index]?.resultado?.tentativas || [],

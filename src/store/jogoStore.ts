@@ -49,9 +49,10 @@ export const useJogoStore = create<JogoState>((set) => ({
   setDesafios: (desafios) =>
     set({ desafios }),
 
-  setDesafioAtual: (desafio) =>
-    set({ desafioAtual: desafio }),
-
+  setDesafioAtual: (desafio) => {
+    // console.log("Atualizando desafio para:", desafio); // Veja se 'conteudo' existe aqui
+    set({ desafioAtual: desafio });
+  },
   setIndiceAtual: (index) =>
     set({ indiceAtual: index }),
 

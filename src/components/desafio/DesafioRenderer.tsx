@@ -20,7 +20,7 @@ export default function DesafioRenderer({ tipo, pergunta }: Props) {
       return <NumeroDesafio pergunta={pergunta} />;
 
     case 'QUIZ':
-      return <QuizDesafio pergunta={pergunta} />;
+      return <QuizDesafio  />;
 
     case 'PADRAO':
       return <PadraoDesafio pergunta={pergunta} />;

@@ -16,7 +16,6 @@ export default function PalavraDesafio({ pergunta }: any) {
     const feedbacks = useJogoStore((s) => s.feedbacks);
     const desafioAtual = useJogoStore((s) => s.desafioAtual);
 
-    console.log(desafioAtual)
 
     const handleEnviar = async () => {
         const result = await enviarResposta();
