@@ -1,6 +1,6 @@
-# Nivra
+# Questify
 
-Nivra é um aplicativo mobile de desafio diário focado em estimular o raciocínio lógico de forma simples, rápida e intuitiva.
+Questify é um aplicativo mobile de desafio diário focado em estimular o raciocínio lógico de forma simples, rápida e intuitiva.
 
 A proposta é oferecer uma experiência minimalista onde o usuário resolve um único desafio por dia, com um fluxo direto e sem distrações.
 
@@ -26,7 +26,7 @@ O objetivo não é ser um jogo complexo, mas sim um hábito diário de estímulo
 * React Native (Expo)
 * TypeScript
 * StyleSheet (UI nativa)
-* Backend (em evolução): Java com Spring Boot
+* Backend: Java com Spring Boot
 
 ## Estrutura
 
