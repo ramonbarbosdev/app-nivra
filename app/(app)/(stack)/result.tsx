@@ -7,13 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useJogoStore } from '@/src/store/jogoStore';
 import { Colors } from '@/src/theme/colors';
 
-// Map tentativa result to cell color
-const CELL_COLORS: Record<string, string> = {
-    correto: Colors.accent,
-    presente: Colors.yellow,
-    incorreto: Colors.gray,
-};
-
 export default function Result() {
     const router = useRouter();
 
@@ -26,6 +19,7 @@ export default function Result() {
         setDesafioAtual,
         setResultado,
         resetar,
+        desafioAtual
     } = useJogoStore();
 
     const idxCorreto = tentativas.indexOf('correto');
@@ -37,7 +31,6 @@ export default function Result() {
     );
     const temProximo = proximoPendenteIndex !== -1;
 
-    // Animations
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(40)).current;
     const iconScale = useRef(new Animated.Value(0.4)).current;
@@ -47,7 +40,6 @@ export default function Result() {
     const secondaryBtnScale = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
-        // Stagger: content first, then icon pops
         Animated.parallel([
             Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
             Animated.spring(slideAnim, { toValue: 0, tension: 65, friction: 11, useNativeDriver: true }),
@@ -84,9 +76,10 @@ export default function Result() {
         router.replace(temProximo ? '/menu' : '/EmptyState');
     };
 
+    const tipo = desafioAtual?.tpDesafio;
+
     return (
         <SafeAreaView style={styles.safe}>
-            {/* Ambient orb */}
             <Animated.View
                 style={[
                     styles.ambientOrb,
@@ -97,7 +90,6 @@ export default function Result() {
             <Animated.View
                 style={[styles.container, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
             >
-                {/* ── Result icon ── */}
                 <Animated.View
                     style={[
                         styles.iconRing,
@@ -119,7 +111,6 @@ export default function Result() {
                     </View>
                 </Animated.View>
 
-                {/* ── Label + title ── */}
                 <View style={styles.labelRow}>
                     <View style={[styles.labelDot, { backgroundColor: accentColor }]} />
                     <Text style={[styles.labelText, { color: accentColor }]}>
@@ -137,7 +128,6 @@ export default function Result() {
                         : 'Tente novamente amanhã'}
                 </Text>
 
-                {/* ── Word grid ── */}
                 {respostas.length > 0 && (
                     <View style={styles.gridBlock}>
                         <View style={styles.cardLabelRow}>
@@ -149,9 +139,9 @@ export default function Result() {
                             {respostas.map((palavra, i) => {
                                 const status = tentativas[i] ?? 'incorreto';
                                 const isLast = i === idxCorreto;
-                                const isQuiz = desafios[indiceAtual]?.tpDesafio === 'QUIZ';
+                                const isQuiz = tipo === 'QUIZ';
 
-                                // Se for QUIZ, renderiza uma bolha de texto simples
+
                                 if (isQuiz) {
                                     return (
                                         <View key={i} style={[
@@ -173,7 +163,6 @@ export default function Result() {
                                     );
                                 }
 
-                                // Se for PALAVRA, mantém o Grid original
                                 return (
                                     <View key={i} style={styles.row}>
                                         {palavra.split('').map((letra, j) => {
@@ -203,16 +192,13 @@ export default function Result() {
                     </View>
                 )}
 
-                {/* ── Divider ── */}
                 <View style={styles.dividerRow}>
                     <View style={styles.dividerLine} />
                     <View style={[styles.dividerDiamond, { backgroundColor: accentColor }]} />
                     <View style={styles.dividerLine} />
                 </View>
 
-                {/* ── Actions ── */}
                 <View style={styles.actions}>
-                    {/* Share */}
                     <Animated.View style={[styles.btnWrap, { transform: [{ scale: primaryBtnScale }] }]}>
                         <Pressable
                             style={styles.primaryButton}
@@ -224,7 +210,6 @@ export default function Result() {
                         </Pressable>
                     </Animated.View>
 
-                    {/* Next */}
                     <Animated.View style={[styles.btnWrap, { transform: [{ scale: secondaryBtnScale }] }]}>
                         <Pressable
                             style={styles.secondaryButton}
@@ -238,7 +223,6 @@ export default function Result() {
                         </Pressable>
                     </Animated.View>
 
-                    {/* End */}
                     <Pressable onPress={handleEnd} style={styles.ghostButton}>
                         <Text style={styles.ghostText}>Encerrar</Text>
                     </Pressable>
@@ -274,7 +258,6 @@ const styles = StyleSheet.create({
         gap: 0,
     },
 
-    // Icon
     iconRing: {
         width: 96,
         height: 96,
@@ -295,7 +278,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-    // Label
     labelRow: {
         flexDirection: 'row',
         alignItems: 'center',
